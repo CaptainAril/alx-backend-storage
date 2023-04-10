@@ -1,14 +1,17 @@
--- Show users and update (or not) email
-SELECT * FROM users;
-
-UPDATE users SET valid_email = 1 WHERE email = "bob@dylan.com";
-UPDATE users SET email = "sylvie+new@dylan.com" WHERE email = "sylvie@dylan.com";
-UPDATE users SET name = "Jannis" WHERE email = "jeanne@dylan.com";
+-- Show and add bonus correction
+SELECT * FROM projects;
+SELECT * FROM corrections;
 
 SELECT "--";
-SELECT * FROM users;
 
-UPDATE users SET email = "bob@dylan.com" WHERE email = "bob@dylan.com";
+CALL AddBonus((SELECT id FROM users WHERE name = "Jeanne"), "Python is cool", 100);
+
+CALL AddBonus((SELECT id FROM users WHERE name = "Jeanne"), "Bonus project", 100);
+CALL AddBonus((SELECT id FROM users WHERE name = "Bob"), "Bonus project", 10);
+
+CALL AddBonus((SELECT id FROM users WHERE name = "Jeanne"), "New bonus", 90);
 
 SELECT "--";
-SELECT * FROM users;
+
+SELECT * FROM projects;
+SELECT * FROM corrections;
