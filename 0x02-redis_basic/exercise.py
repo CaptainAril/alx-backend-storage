@@ -99,11 +99,3 @@ class Cache:
         """Takes a key, and converts the value data to integer.
         """
         return (self.get(key, int))
-
-
-cache = Cache()
-
-cache.store("foo")
-cache.store("bar")
-cache.store(42)
-replay(cache.store)
