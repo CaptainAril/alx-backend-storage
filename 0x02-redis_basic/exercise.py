@@ -38,6 +38,31 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
+def replay(method: Callable) -> None:
+    """Displays the history of calls of a particular function.
+    """
+    r = redis.Redis()
+    method_name = method.__qualname__
+    output_key = f'{method_name}:outputs'
+    input_key = f'{method_name}:inputs'
+    input_list = list(map(decode, r.lrange(input_key, 0, -1)))
+    output_list = list(map(decode, r.lrange(output_key, 0, -1)))
+
+    lt = list(zip(input_list, output_list))
+    print(f"{method_name} was called {len(lt)} times:")
+    for item in lt:
+        k, v = item
+        print(f"{method_name}(*{k}) -> {v}")
+
+
+def decode(str: bytes) -> Union[str, int]:
+    """Converts from bytes"""
+    try:
+        return str.decode('utf-8')
+    except Exception as e:
+        pass
+
+
 class Cache:
     """Declares a Cache class."""
     def __init__(self) -> None:
@@ -74,3 +99,11 @@ class Cache:
         """Takes a key, and converts the value data to integer.
         """
         return (self.get(key, int))
+
+
+cache = Cache()
+
+cache.store("foo")
+cache.store("bar")
+cache.store(42)
+replay(cache.store)
